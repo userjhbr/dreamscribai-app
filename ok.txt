@@ -1,0 +1,32 @@
+dreamscribai-app/
+├── app.py                 # Arquivo principal do Flask
+├── requirements.txt       # Arquivo de dependências do Python
+├── README.md              # Documentação do projeto (em inglês)
+├── static/                # Pasta para arquivos estáticos (CSS, JS, imagens)
+│   └── styles.css         # Arquivo CSS para estilização
+└── templates/             # Pasta para templates HTML
+    └── index.html         # Página inicial da aplicação
+
+dreamscribai-app/
+├── app.py                 # Arquivo principal do Flask
+├── requirements.txt       # Arquivo de dependências do Python
+├── README.md              # Documentação do projeto (em inglês)
+├── static/                # Pasta para arquivos estáticos (CSS, JS, imagens)
+│   └── styles.css         # Arquivo CSS para estilização
+├── templates/             # Pasta para templates HTML
+│   └── index.html         # Página inicial da aplicação
+├── Dockerfile             # Arquivo Docker para construir a imagem da aplicação
+├── docker-compose.yml     # Arquivo Docker Compose para configurar serviços
+├── Jenkinsfile            # Arquivo Jenkinsfile para configuração do pipeline CI/CD
+├── tests/                 # Pasta para testes automatizados
+│   ├── unit/              # Testes unitários
+│   └── integration/       # Testes de integração
+└── monitoring/            # Pasta para configuração de monitoramento
+    ├── prometheus/        # Configuração do Prometheus
+    │   └── prometheus.yml
+    ├── grafana/           # Configuração do Grafana
+    │   └── grafana.ini
+    └── elk/               # Configuração do ELK Stack
+        ├── elasticsearch.yml
+        ├── logstash.conf
+        └── kibana.yml
