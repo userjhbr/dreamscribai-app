@@ -7,6 +7,8 @@ services:
       POSTGRES_USER: kong
       POSTGRES_DB: kong
       POSTGRES_PASSWORD: kong
+    volumes:
+      - kong-db-data:/var/lib/postgresql/data
 
   kong:
     image: kong:latest
@@ -21,6 +23,8 @@ services:
       - "8443:8443"
       - "8001:8001"
       - "8444:8444"
+    volumes:
+      - kong-config:/usr/local/kong
 
   flask-api:
     build: .
@@ -31,11 +35,15 @@ services:
     image: prom/prometheus
     ports:
       - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
 
   grafana:
     image: grafana/grafana
     ports:
       - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
@@ -44,12 +52,16 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.12.1
     ports:
       - "5044:5044"
       - "9600:9600"
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.12.1
@@ -63,5 +75,8 @@ services:
     entrypoint: zap-webswing.sh
 
 volumes:
+  kong-db-data:
+  kong-config:
+  prometheus-data:
   grafana-storage:
   es-data:
