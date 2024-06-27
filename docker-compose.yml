@@ -19,9 +19,13 @@ services:
     depends_on:
       - kong-database
     ports:
+      # Porta para proxy HTTP padrão
       - "8000:8000"
+      # Porta para proxy HTTPS seguro
       - "8443:8443"
+      # Porta para API de administração não segura
       - "8001:8001"
+      # Porta para API de administração segura
       - "8444:8444"
     volumes:
       - kong-config:/usr/local/kong
