@@ -9,6 +9,11 @@ services:
       POSTGRES_PASSWORD: kong
     volumes:
       - kong-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kong"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   kong:
     image: kong:latest
@@ -29,11 +34,21 @@ services:
       - "8444:8444"
     volumes:
       - kong-config:/usr/local/kong
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   flask-api:
     build: .
     ports:
       - "5000:5000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   prometheus:
     image: prom/prometheus
@@ -41,6 +56,11 @@ services:
       - "9090:9090"
     volumes:
       - prometheus-data:/prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9090/-/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   grafana:
     image: grafana/grafana
@@ -48,6 +68,11 @@ services:
       - "3000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
@@ -58,6 +83,11 @@ services:
       - "9300:9300"
     volumes:
       - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.12.1
@@ -66,17 +96,32 @@ services:
       - "9600:9600"
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9600/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.12.1
     ports:
       - "5601:5601"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   owasp-zap:
     image: securecodebox/zap:latest
     ports:
       - "8090:8080"
     entrypoint: zap-webswing.sh
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8090/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   kong-db-data:
