@@ -69,7 +69,7 @@ services:
       - "5601:5601"
 
   owasp-zap:
-    image: owasp/zap2docker-stable:latest
+    image: securecodebox/zap:latest
     ports:
       - "8090:8080"
     entrypoint: zap-webswing.sh
@@ -80,4 +80,3 @@ volumes:
   prometheus-data:
   grafana-storage:
   es-data:
-  
