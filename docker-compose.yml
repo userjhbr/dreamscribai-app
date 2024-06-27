@@ -1,50 +1,67 @@
-version: '3.8'
+version: '3'
 
 services:
-  app:
-    build:
-      context: .
+  kong-database:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kong
+
+  kong:
+    image: kong:latest
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_CASSANDRA_CONTACT_POINTS: kong-database
+    depends_on:
+      - kong-database
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+
+  flask-api:
+    build: .
     ports:
       - "5000:5000"
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
 
   prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    image: prom/prometheus
     ports:
       - "9090:9090"
 
   grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - ./grafana.ini:/etc/grafana/grafana.ini
+    image: grafana/grafana
     ports:
       - "3000:3000"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
-    volumes:
-      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
+    environment:
+      - discovery.type=single-node
     ports:
       - "9200:9200"
+      - "9300:9300"
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:7.15.0
-    volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    image: docker.elastic.co/logstash/logstash:7.12.1
     ports:
-      - "5001:5001"
+      - "5044:5044"
+      - "9600:9600"
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.15.0
-    volumes:
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    image: docker.elastic.co/kibana/kibana:7.12.1
     ports:
       - "5601:5601"
+
+  owasp-zap:
+    image: owasp/zap2docker-stable
+    ports:
+      - "8090:8080"
+    entrypoint: zap-webswing.sh
+
+volumes:
+  grafana-storage:
+  es-data:
